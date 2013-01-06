@@ -401,9 +401,6 @@ fact-done)
 (start fact-machine)
 (get-register-contents fact-machine 'val)
 
-;; contineu fact-done -> after-fact
-;; n        2         -> 1
-
 ;; * 二重再帰
 ;; 1.2.2のFibonacci数の木構造再帰計算を考える
 (define (fib n)
@@ -454,13 +451,6 @@ fib-done)
 (set-register-contents! fib-machine 'n 6)
 (start fib-machine)
 (get-register-contents fib-machine 'val)
-
-;; continue done -> n1   -> n1      -> n1   -> n2
-;; stack         -> done -> done n1 -> done -> done n1
-;; n        3    -> 2    -> 1       -> 2    -> 0
-;; stack         -> 3    -> 3 2     -> 3
-;; val                              -> 1               -> 0
-;; stack                                    -> 1
 
 ;; 必要になるレジスタを退避して、nレジスタをそのFibを再帰的に計算したい値（n-1かn-2）に設定して、
 ;; continueに主命令列のそこへ戻りたい入り口を代入する。次にfib-loopに行く

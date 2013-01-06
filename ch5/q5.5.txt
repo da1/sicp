@@ -1,0 +1,96 @@
+;; 問題5.5 図5.11の再帰的階乗計算機机上シミュレーション
+L379 (assign continue (label fact-done))
+n: 3
+continue: fact-done
+stack:
+
+L387-1 (assign continue (label after-fact))
+n: 2
+continue: after-fact
+stack: fact-done 3
+
+L387-2
+n: 1
+continue: after-fact
+stack: fact-done 3 after-fact 2
+
+L395 (assign val (const 1))
+val: 1
+n: 1
+continue: after-fact
+stack: fact-done 3 after-fact 2
+
+L392-1 (assign val (op *) (reg n) (reg val))
+val: 2
+n: 2
+continue: after-fact
+stack: fact-done 3
+
+L392-2
+val: 6
+n: 3
+continue: fact-done
+stack:
+
+;; 問題5.5 図5.12 Fibonacci数計算の制御 机上シミュレーション
+;; Fib(3)
+L423 (assign continue (label fib-done))
+n: 3
+continue: fib-done
+stack:
+
+;; Fib(2)
+L431-1 (assign n (op -) (reg n) (const 1))
+n: 2
+continue: afterfib-n-1
+stack: fib-done 3
+
+;; Fib(1)
+L431-2
+n: 1
+continue: afterfib-n-1
+stack: fib-done 3 afterfib-n-1 2
+
+L449 (assign val (reg n))
+val: 1
+n: 1
+continue: afterfib-n-1
+stack: fib-done 3 afterfib-n-1 2
+
+;; Fib(0)
+L440 (save val)
+val: 1
+n: 0
+continue: afterfib-n-2
+stack: fib-done 3 afterfib-n-1 1
+
+L449-2
+val: 0
+n: 0
+continue: afterfib-n-2
+stack: fib-done 3 afterfib-n-1 1
+
+L446 (assign val (op +) (reg val) (reg n))
+val: 1
+n: 0
+continue: afterfib-n-1
+stack: fib-done 3
+
+;; Fib(1)
+L440-2
+val: 1
+n: 1
+continue: afterfib-n-2
+stack: fib-done 1
+
+L449
+val: 1
+n: 1
+continue: afterfib-n-2
+stack: fib-done 1
+
+L446-2
+val: 2
+n: 1
+continue: fib-done
+stack:
