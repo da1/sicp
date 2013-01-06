@@ -95,15 +95,29 @@
 ;; aとbの内容をremして結果をtに代入するボタンを押せ
 ;; データパスの記述をやめて、制御器の列だけになる。
 
-(controller
-test-b
- (test (op =) (reg b) (const 0))
- (branch (label gcd-done))
- (assign t (op rem) (reg a) (reg b))
- (assign a (reg b))
- (assign b (reg t))
- (goto (label test-b))
-gcd-done)
+(load "./assemble.scm")
+(load "./compdata.scm")
+(load "./compiler.scm")
+(load "./syntax.scm")
+(load "./regsim.scm")
+
+(define gcd-machine
+  (make-machine
+   '(a b t)
+   (list (list 'rem remainder) (list '= =))
+   '(test-b
+     (test (op =) (reg b) (const 0))
+     (branch (label gcd-done))
+     (assign t (op rem) (reg a) (reg b))
+     (assign a (reg b))
+     (assign b (reg t))
+     (goto (label test-b))
+     gcd-done)))
+
+(set-register-contents! gcd-machine 'a 16)
+(set-register-contents! gcd-machine 'b 13)
+(start gcd-machine)
+(get-register-contents gcd-machine 'a)
 
 ;; 図5.3のものより読みやすいが欠点もある
 ;; 冗長 データパスの要素が制御器の命令列に現れるときに、記述が繰り返される
@@ -115,7 +129,11 @@ gcd-done)
 
 ;; 問題5.2
 ;; レジスタ計算機言語を使い、問題5.1の階乗計算機を記述せよ
-(controller
+(define factorial-machine
+  (make-machine
+   '(p c n t)
+   (list (list '* *) (list '+ +) (list '> >))
+'(
  (assign p (const 1))
  (assign c (const 1))
 iter
@@ -127,6 +145,11 @@ iter
  (assign c (reg t))
  (goto (label iter))
 factorial-done)
+))
+
+(set-register-contents! factorial-machine 'n 5)
+(start factorial-machine)
+(get-register-contents factorial-machine 'p)
 
 ;; * 働き
 ;; GCD計算機の結果を端末に印字させるようにする
@@ -168,7 +191,11 @@ gcd-done
 ;; 図5.5は改善した計算機データパスと制御器
 
 ;; 図5.6
-(controller
+(define gcd-machine
+  (make-machine
+   '(a b t)
+   (list (list '= =) (list '< <) (list '- -))
+'(
 test-b
     (test (op =) (reg b) (const 0))
     (branch (label gcd-done))
@@ -183,18 +210,15 @@ rem-done
     (assign b (reg t))
     (goto (label test-b))
 gcd-done)
+))
+
+(set-register-contents! gcd-machine 'a 25)
+(set-register-contents! gcd-machine 'b 5)
+(start gcd-machine)
+(get-register-contents gcd-machine 'a)
 
 ;; 問題5.3
-;; 1.1.7で述べたNewton法を使い、平香港を計算する計算機を設計せよ
-
-(define (sqrt-iter guess x)
-  (if (good-enough? guess x)
-      guess
-      (sqrt-iter (improve guess x)
-		 x)))
-
-(define (improve guess x)
-  (average guess (/ x guess)))
+;; 1.1.7で述べたNewton法を使い、平方根を計算する計算機を設計せよ
 
 (define (average x y)
   (/ (+ x y) 2))
@@ -202,16 +226,48 @@ gcd-done)
 (define (square x)
   (* x x))
 
-(define (good-enough? guess x)
-  (< (abs (- (square guess) x)) 0.001))
-
 (define (sqrt x)
-  (sqrt-iter 1.0 x))
+  (define (good-enough? guess)
+    (< (abs (- (square guess) x)) 0.001))
+  (define (improve guess)
+    (average guess (/ x guess)))
+  (define (sqrt-iter guess)
+    (if (good-enough? guess)
+      guess
+      (sqrt-iter (improve guess))))
+  (sqrt-iter 1.0))
 
 (controller
-    (assign g (const 1.0))
-    (test (op <) )
-    )
+  (assign g (const 1.0))
+iter
+  (test (op good-enough?) (reg g))
+  (assign t (op improve) (reg g))
+  (assign g (reg t))
+  (branch iter)
+          )
+
+(define newton-machine
+  (make-machine
+   '(g t1 t2 x)
+   (list (list '* *) (list '/ /) (list '+ +) (list '- -) (list '< <) (list 'abs abs))
+'(
+  (assign g (const 1.0))
+iter-loop
+  (assign t1 (op *) (reg g) (reg g))
+  (assign t2 (op -) (reg t1) (reg x))
+  (assign t1 (op abs) (reg t2))
+  (test (op <) (reg t1) (const 0.001))
+  (branch (label iter-done))
+  (assign t1 (op /) (reg x) (reg g))
+  (assign t2 (op +) (reg g) (reg t1))
+  (assign g (op /) (reg t2) (const 2.0))
+  (goto (label iter-loop))
+iter-done)
+))
+
+(set-register-contents! newton-machine 'x 9)
+(start newton-machine)
+(get-register-contents newton-machine 'g)
 
 ;; 5.1.3 サブルーチン
 ;; 図5.7 2つのGCD計算を持つ計算機のデータパスと制御器命令列の一部
@@ -315,7 +371,11 @@ after-gcd-2
 ;; 命令の下請け問題を解く部分へ移行し、主問題から呼び出したところから続行するために制御器にcontinueレジスタを使わせる
 
 ;; 図5.11 再帰的階乗計算機
-(controller
+(define fact-machine
+  (make-machine
+   '(n val continue)
+   (list (list '= =) (list '- -) (list '* *))
+'(
     (assign continue (label fact-done))
  fact-loop
     (test (op =) (reg n) (const 1))
@@ -335,6 +395,11 @@ base-case
     (assign val (const 1))
     (goto (reg continue))
 fact-done)
+))
+
+(set-register-contents! fact-machine 'n 5)
+(start fact-machine)
+(get-register-contents fact-machine 'val)
 
 ;; contineu fact-done -> after-fact
 ;; n        2         -> 1
@@ -350,7 +415,11 @@ fact-done)
 ;; この計算機は、再帰呼び出しを実行しなければならない場所が、命令列に2つあるので、階乗の時より複雑になる
 
 ;; 図5.11 再帰的階乗計算機
-(controller
+(define fib-machine
+  (make-machine
+   '(n val continue)
+   (list (list '< <) (list '+ +) (list '- -))
+'(
     (assign continue (label fib-done))
 fib-loop
     (test (op <) (reg n) (const 2))
@@ -380,6 +449,11 @@ immediate-answer
     (assign val (reg n))
     (goto (reg continue))
 fib-done)
+))
+
+(set-register-contents! fib-machine 'n 6)
+(start fib-machine)
+(get-register-contents fib-machine 'val)
 
 ;; continue done -> n1   -> n1      -> n1   -> n2
 ;; stack         -> done -> done n1 -> done -> done n1
@@ -394,11 +468,100 @@ fib-done)
 ;; 問題5.4
 ;; 次の手続きのそれぞれを実装するレジスタ計算機を規定せよ
 ;; 各計算機に対し、制御器の命令列を書き、データパスを示す図を描け
+;; a. 再帰的べき乗
+(define expt-machine
+  (make-machine
+   '(n b val continue)
+   (list (list '= =) (list '- -) (list '* *))
+'(
+  (assign continue (label expt-done))
+expt-loop
+  (test (op =) (reg n) (const 0))
+  (branch (label base-case))
+  (save continue)
+  (save n)
+  (assign n (op -) (reg n) (const 1))
+  (assign continue (label after-expt))
+  (goto (label expt-loop))
+after-expt
+  (restore n)
+  (restore continue)
+  (assign val (op *) (reg b) (reg val))
+  (goto (reg continue))
+base-case
+  (assign val (const 1))
+  (goto (reg continue))
+expt-done)))
+
+(set-register-contents! expt-machine 'b 2)
+(set-register-contents! expt-machine 'n 4)
+(start expt-machine)
+(get-register-contents expt-machine 'val)
+
+(define expt-machine
+  (make-machine
+   '(p c b n)
+   (list (list '- -) (list '* *) (list '= =))
+'(
+  (assign p (const 1))
+  (assign c (reg n))
+expt-iter
+  (test (op =) (reg c) (const 0))
+  (branch (label expt-done))
+  (assign c (op -) (reg c) (const 1))
+  (assign p (op *) (reg b) (reg p))
+  (goto (label expt-iter))
+expt-done)))
+
+(set-register-contents! expt-machine 'b 2)
+(set-register-contents! expt-machine 'n 4)
+(start expt-machine)
+(get-register-contents expt-machine 'p)
 
 ;; 問題5.5 階乗とFibonacci計算機を机上シミュレーションせよ
 
 ;; 問題5.6
 ;; Ben BitdiddleはFibonacci計算機の制御列には、余計なsaveとrestoreがあると見た。それはどれか
+(define fib-machine
+  (make-machine
+   '(n val continue)
+   (list (list '< <) (list '+ +) (list '- -))
+'(
+    (assign continue (label fib-done))
+fib-loop
+    (test (op <) (reg n) (const 2))
+    (branch (label immediate-answer))
+    ;;Fib(n-1)
+    (save continue)
+    (assign continue (label afterfib-n-1))
+    (save n)
+    (assign n (op -) (reg n) (const 1))
+    (goto (label fib-loop))
+afterfib-n-1
+    (restore n)
+;    (restore continue) ;無駄
+    ;;Fib(n-2)
+    (assign n (op -) (reg n) (const 2))
+;    (save continue)    ;無駄 上でrestoreしたものをすぐにsaveしてる
+    (assign continue (label afterfib-n-2))
+    (save val)
+    (goto (label fib-loop))
+afterfib-n-2
+    (assign n (reg val))
+    (restore val)
+    (restore continue)
+    (assign val (op +) (reg val) (reg n))
+    (goto (reg continue))
+immediate-answer
+    (assign val (reg n))
+    (goto (reg continue))
+fib-done)
+))
+
+(set-register-contents! fib-machine 'n 6)
+(start fib-machine)
+(get-register-contents fib-machine 'val)
+
 
 ;; 5.1.5 命令の要約
 ;; レジスタ計算機言語の制御器命令一覧
