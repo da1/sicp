@@ -49,6 +49,7 @@
 ;; 問題5.1
 ;; 階乗を計算するレジスタ計算機を設計せよ。
 ;; この計算機のデータパス図、制御図を描け
+; t不要
 
 ;; 5.1.1 レジスタ計算機の記述言語
 ;; データパス図や制御図のようなものを文書の形で表現する言語を作る
@@ -95,11 +96,11 @@
 ;; aとbの内容をremして結果をtに代入するボタンを押せ
 ;; データパスの記述をやめて、制御器の列だけになる。
 
-(load "./assemble.scm")
-(load "./compdata.scm")
-(load "./compiler.scm")
-(load "./syntax.scm")
-(load "./regsim.scm")
+(load "../assemble.scm")
+(load "../compdata.scm")
+(load "../compiler.scm")
+(load "../syntax.scm")
+(load "../regsim.scm")
 
 (define gcd-machine
   (make-machine
