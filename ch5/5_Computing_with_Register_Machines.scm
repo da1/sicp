@@ -272,8 +272,10 @@ iter-done)
 
 ;; 5.1.3 サブルーチン
 ;; 図5.7 2つのGCD計算を持つ計算機のデータパスと制御器命令列の一部
+;; ベタ書き
 
 ;; 図5.8 2つの異なるGCD計算に同じデータパスを使う計算機の制御器命令列の一部
+;; 使うレジスタを共通化する
 gcd-1
     (test (op =) (reg b) (const 0))
     (branch (label after-gcd-1))
@@ -293,6 +295,7 @@ gcd-2
 after-gcd-2
 
 ;; 図5.9 図5.8の重複命令列を避けるためにcontinueレジスタを使う
+;; ラベルを共通化
 gcd
   (test (op =) (reg b) (const 0))
   (branch (label gcd-done))
