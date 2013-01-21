@@ -222,10 +222,12 @@ expt-done)))
 		      (lambda (insts labels)
 			(let ((next-inst (car text)))
 			  (if (symbol? next-inst)
+			      ;;label
 			      (receive insts
 				       (cons (make-label-entry next-inst
 							       insts)
 					     labels))
+			      ;; 命令
 			      (receive (cons (make-instruction next-inst)
 					     insts)
 				       labels)))))))
@@ -505,7 +507,7 @@ there
   (let ((op (lookup-prim (operation-exp-op exp) operations))
 	(aprocs
 	 (map (lambda (e)
-		(if (label-exp? e) ;; registerとconstでない(label)ならエラー
+		(if (label-exp? e) ;;registerかconstと明示的に書いたほうがいいかも 今はregisterでもconstでもない＝labelなのでこれでも動く
 		    (error "Operation use only register or const")
 		    (make-primitive-exp e machine labels)))
 	      (operation-exp-operands exp))))
