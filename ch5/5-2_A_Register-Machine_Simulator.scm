@@ -12,74 +12,74 @@
 ;; (start <machine-model>)
 ;; 計算機のシミュレートを実行する
 
-(define ghd-machine
-  (make-machine
-   '(a b t)
-   (list (list 'rem remainder) (list '= =))
-   '(test-b
-     (test (op =) (reg b) (const 0))
-     (branch (label gcd-done))
-     (assign t (op rem) (reg a) (reg b))
-     (assign a (reg b))
-     (assign b (reg t))
-     (goto (label test-b))
-     gcd-done)))
+;; (define ghd-machine
+;;   (make-machine
+;;    '(a b t)
+;;    (list (list 'rem remainder) (list '= =))
+;;    '(test-b
+;;      (test (op =) (reg b) (const 0))
+;;      (branch (label gcd-done))
+;;      (assign t (op rem) (reg a) (reg b))
+;;      (assign a (reg b))
+;;      (assign b (reg t))
+;;      (goto (label test-b))
+;;      gcd-done)))
 
-(set-register-contents! gcd-machine 'a 206)
-(set-register-contents! gcd-machine 'b 40)
-(start gcd-machine)
-(get-register-contents gcd-machine 'a)
+;; (set-register-contents! gcd-machine 'a 206)
+;; (set-register-contents! gcd-machine 'b 40)
+;; (start gcd-machine)
+;; (get-register-contents gcd-machine 'a)
 
 ;; 問題5.7
 ;; このシミュレータを使い、問題5.4で設計した計算機をテストせよ
-(define expt-machine
-  (make-machine
-   '(n b val continue)
-   (list (list '= =) (list '- -) (list '* *))
-'(
-  (assign continue (label expt-done))
-expt-loop
-  (test (op =) (reg n) (const 0))
-  (branch (label base-case))
-  (save continue)
-  (save n)
-  (assign n (op -) (reg n) (const 1))
-  (assign continue (label after-expt))
-  (goto (label expt-loop))
-after-expt
-  (restore n)
-  (restore continue)
-  (assign val (op *) (reg b) (reg val))
-  (goto (reg continue))
-base-case
-  (assign val (const 1))
-  (goto (reg continue))
-expt-done)))
+;; (define expt-machine
+;;   (make-machine
+;;    '(n b val continue)
+;;    (list (list '= =) (list '- -) (list '* *))
+;; '(
+;;   (assign continue (label expt-done))
+;; expt-loop
+;;   (test (op =) (reg n) (const 0))
+;;   (branch (label base-case))
+;;   (save continue)
+;;   (save n)
+;;   (assign n (op -) (reg n) (const 1))
+;;   (assign continue (label after-expt))
+;;   (goto (label expt-loop))
+;; after-expt
+;;   (restore n)
+;;   (restore continue)
+;;   (assign val (op *) (reg b) (reg val))
+;;   (goto (reg continue))
+;; base-case
+;;   (assign val (const 1))
+;;   (goto (reg continue))
+;; expt-done)))
 
-(set-register-contents! expt-machine 'b 2)
-(set-register-contents! expt-machine 'n 4)
-(start expt-machine)
-(get-register-contents expt-machine 'val)
+;; (set-register-contents! expt-machine 'b 2)
+;; (set-register-contents! expt-machine 'n 4)
+;; (start expt-machine)
+;; (get-register-contents expt-machine 'val)
 
-(define expt-machine
-  (make-machine
-   '(p c b n)
-   (list (list '- -) (list '* *) (list '= =))
-'(
-  (assign p (const 1))
-  (assign c (reg n))
-expt-iter
-  (test (op =) (reg c) (const 0))
-  (branch (label expt-done))
-  (assign c (op -) (reg c) (const 1))
-  (assign p (op *) (reg b) (reg p))
-  (goto (label expt-iter))
-expt-done)))
+;; (define expt-machine
+;;   (make-machine
+;;    '(p c b n)
+;;    (list (list '- -) (list '* *) (list '= =))
+;; '(
+;;   (assign p (const 1))
+;;   (assign c (reg n))
+;; expt-iter
+;;   (test (op =) (reg c) (const 0))
+;;   (branch (label expt-done))
+;;   (assign c (op -) (reg c) (const 1))
+;;   (assign p (op *) (reg b) (reg p))
+;;   (goto (label expt-iter))
+;; expt-done)))
 
-(set-register-contents! expt-machine 'b 2)
-(set-register-contents! expt-machine 'n 4)
-(start expt-machine)
-(get-register-contents expt-machine 'p)
+;; (set-register-contents! expt-machine 'b 2)
+;; (set-register-contents! expt-machine 'n 4)
+;; (start expt-machine)
+;; (get-register-contents expt-machine 'p)
 
 ;; 5.2.1 計算機モデル
 ;; make-machineは、3章で開発したメッセージパッシング技法を使う
@@ -108,7 +108,7 @@ expt-done)))
 ;; レジスタへのアクセス用
 (define (get-contents register)
   (register 'get))
-(define (set-contents register value)
+(define (set-contents! register value)
   ((register 'set) value))
 
 ;; *スタック
@@ -128,7 +128,7 @@ expt-done)))
       'done)
     (define (dispatch message)
       (cond ((eq? message 'push) push)
-	    ((eq? message 'pop) pop)
+	    ((eq? message 'pop) (pop))
 	    ((eq? message 'initialize) (initialize))
 	    (else (error "Unknown request -- STACK"
 			 message))))
@@ -171,7 +171,9 @@ expt-done)))
 	(the-instruction-sequence '()))
     (let ((the-ops
 	   (list (list 'initialize-stack
-		       (lambda () (stack initialize)))))
+		       (lambda () (stack 'initialize)))
+		 (list 'print-stack-statistics
+		       (lambda () (stack 'print-stack-statistics)))))
 	  (register-table
 	   (list (list 'pc pc) (list 'flag flag))))
       (define (allocate-register name)
@@ -222,11 +224,11 @@ expt-done)))
 		      (lambda (insts labels)
 			(let ((next-inst (car text)))
 			  (if (symbol? next-inst)
-			      ;;label
-			      (receive insts
-				       (cons (make-label-entry next-inst
-							       insts)
-					     labels))
+				;;label
+				(receive insts
+					 (cons (make-label-entry next-inst
+								 insts)
+					       labels))
 			      ;; 命令
 			      (receive (cons (make-instruction next-inst)
 					     insts)
@@ -283,47 +285,47 @@ expt-done)))
 ;; there
 ;; シミュレータでは、thereに達したときのaの値はどうなるか
 ;; extract-labels手続きを修正して、同じラベル名が異なる2つの場所を指すように使われたらエラーとせよ
-(load "../assemble.scm")
-(load "../compdata.scm")
-(load "../compiler.scm")
-(load "../syntax.scm")
-(load "../regsim.scm")
-(define here-machine
-  (make-machine
-   '(a)
-   (list '())
-'(
-start
-  (goto (label here))
-here
-  (assign a (const 3))
-  (goto (label there))
-here
-  (assign a (const 4))
-  (goto (label there))
-there
-)))
+;; (load "../assemble.scm")
+;; (load "../compdata.scm")
+;; (load "../compiler.scm")
+;; (load "../syntax.scm")
+;; (load "../regsim.scm")
+;; (define here-machine
+;;   (make-machine
+;;    '(a)
+;;    (list '())
+;; '(
+;; start
+;;   (goto (label here))
+;; here
+;;   (assign a (const 3))
+;;   (goto (label there))
+;; here1
+;;   (assign a (const 4))
+;;   (goto (label there))
+;; there
+;; )))
 
-(start here-machine)
-(get-register-contents here-machine 'a)
+;; (start here-machine)
+;; (get-register-contents here-machine 'a)
 
 ;; http://sicp-study.g.hatena.ne.jp/papamitra/20080728/sicp_ex5_8
 ;; extract-labelsはその再帰具合からtextの末尾(ここではthere)からlabelsを作っていく。一方make-gotoで使用するlookup-labelではassocでlabelsリストの先頭から検索していくので、最初のhereに飛ぶことになる。
-(define (extract-labels text receive)
-  (if (null? text)
-      (receive '() '())
-      (extract-labels (cdr text)
-		      (lambda (insts labels)
-			(let ((next-inst (car text)))
-			  (if (symbol? next-inst)
-			      (if (assoc next-inst labels)
-				  (error "Multiply defined label: " next-inst)
-                		  (receive insts
-				      (cons (make-label-entry next-inst insts)
-					    labels)))
-			          (receive (cons (make-instruction next-inst)
-					   insts)
-				           labels)))))))
+;; (define (extract-labels text receive)
+;;   (if (null? text)
+;;       (receive '() '())
+;;       (extract-labels (cdr text)
+;; 		      (lambda (insts labels)
+;; 			(let ((next-inst (car text)))
+;; 			  (if (symbol? next-inst)
+;; 			      (if (assoc next-inst labels)
+;; 				  (error "Multiply defined label: " next-inst)
+;;                 		  (receive insts
+;; 				      (cons (make-label-entry next-inst insts)
+;; 					    labels)))
+;; 			      (receive (cons (make-instruction next-inst)
+;; 					     insts)
+;; 				       labels)))))))
 
 
 ;; 5.2.3 命令の実行手続きの生成
@@ -333,7 +335,7 @@ there
   (cond ((eq? (car inst) 'assign)
 	 (make-assign inst machine labels ops pc))
 	((eq? (car inst) 'test)
-	 (make-test inst machine labels ops pc))
+	 (make-test inst machine labels ops flag pc))
 	((eq? (car inst) 'branch)
 	 (make-branch inst machine labels flag pc))
 	((eq? (car inst) 'goto)
@@ -405,7 +407,7 @@ there
     (cond ((label-exp? dest)
 	   (let ((insts
 		  (lookup-label labels
-				(lookup-exp-label dest))))
+				(label-exp-label dest))))
 	     (lambda () (set-contents! pc insts))))
 	  ((register-exp? dest)
 	   (let ((reg
@@ -466,10 +468,16 @@ there
 	   (lambda () insts)))
 	((register-exp? exp)
 	 (let ((r (get-register machine
-				register-exp-reg exp)))
+				(register-exp-reg exp))))
 	   (lambda () (get-contents r))))
 	(else
 	 (error "Unknown expression type -- ASSEMBLE" exp))))
+
+;; ch4から
+(define (tagged-list? exp tag)
+  (if (pair? exp)
+      (eq? (car exp) tag)
+      #f))
 
 (define (register-exp? exp) (tagged-list? exp 'reg))
 (define (register-exp-reg exp) (cadr exp))
@@ -496,23 +504,23 @@ there
   (cdr operation-exp))
 
 (define (lookup-prim symbol operations)
-  (let ((val (assoc symbol? operations)))
+  (let ((val (assoc symbol operations)))
     (if val
 	(cadr val)
 	(error "Unknown operation -- ASSEMBLE" symbol))))
 
 ;; 問題5.9
 ;; 演算は、レジスタと定数にだけ使えるように条件をつけよ
-(define (make-operation-exp exp machine labels operations)
-  (let ((op (lookup-prim (operation-exp-op exp) operations))
-	(aprocs
-	 (map (lambda (e)
-		(if (label-exp? e) ;;registerかconstと明示的に書いたほうがいいかも 今はregisterでもconstでもない＝labelなのでこれでも動く
-		    (error "Operation use only register or const")
-		    (make-primitive-exp e machine labels)))
-	      (operation-exp-operands exp))))
-    (lambda ()
-      (apply op (map (lambda (p) (p)) aprocs)))))
+;; (define (make-operation-exp exp machine labels operations)
+;;   (let ((op (lookup-prim (operation-exp-op exp) operations))
+;; 	(aprocs
+;; 	 (map (lambda (e)
+;; 		(if (label-exp? e) ;;registerかconstと明示的に書いたほうがいいかも 今はregisterでもconstでもない＝labelなのでこれでも動く
+;; 		    (error "Operation use only register or const")
+;; 		    (make-primitive-exp e machine labels)))
+;; 	      (operation-exp-operands exp))))
+;;     (lambda ()
+;;       (apply op (map (lambda (p) (p)) aprocs)))))
 
 ;; 問題5.10
 ;; 新しい構文を追加せよ
@@ -534,29 +542,29 @@ there
 ;; nとvalの値が逆になるが、命令数が一個減る
 
 ;; b. saveしたレジスタへのrestore以外はエラーになるように修正せよ
-(define (make-save inst machine stack pc)
-  (let ((reg-name (stack-inst-reg-name inst)))
-       (let ((reg (get-register machine reg-name)))
-            (lambda ()
-                    (push stack (cons reg-name (get-contents reg)))
-                    (advance-pc pc)))))
+;; (define (make-save inst machine stack pc)
+;;   (let ((reg-name (stack-inst-reg-name inst)))
+;;        (let ((reg (get-register machine reg-name)))
+;;             (lambda ()
+;;                     (push stack (cons reg-name (get-contents reg)))
+;;                     (advance-pc pc)))))
 
-(define (make-save inst machine stack pc)
-  (let ((reg (get-register machine
-			   (stack-inst-reg-name inst))))
-    (lambda ()
-      (push stack (cons reg (get-contents reg)))
-      (advance-pc pc))))
+;; (define (make-save inst machine stack pc)
+;;   (let ((reg (get-register machine
+;; 			   (stack-inst-reg-name inst))))
+;;     (lambda ()
+;;       (push stack (cons reg (get-contents reg)))
+;;       (advance-pc pc))))
 
-(define (make-restore inst machine stack pc)
-  (let ((reg (get-register machine
-			   (stack-inst-reg-name inst))))
-    (lambda ()
-      (let ((head-of-stack (pop stack)))
-	(if (eq? (car head-of-stack) reg)
-	    (set-contents! reg (cdr head-of-stack))
-	    (error "Wrong register name -- RESTORE" reg))
-	(advance-pc pc)))))
+;; (define (make-restore inst machine stack pc)
+;;   (let ((reg (get-register machine
+;; 			   (stack-inst-reg-name inst))))
+;;     (lambda ()
+;;       (let ((head-of-stack (pop stack)))
+;; 	(if (eq? (car head-of-stack) reg)
+;; 	    (set-contents! reg (cdr head-of-stack))
+;; 	    (error "Wrong register name -- RESTORE" reg))
+;; 	(advance-pc pc)))))
 
 ;; 問題5.12
 ;; 次の情報を計算機モデルに格納するようにせよ
@@ -572,48 +580,103 @@ there
 ;; 問題5.13
 ;; make-machineの引数にレジスタリストを要求せずに、命令列から使うレジスタを決められるようにシミュレータを修正せよ
 
-(define (make-new-machine)
-  (let ((pc (make-register 'pc))
-	(flag (make-register 'flag))
-	(stack (make-stack))
-	(the-instruction-sequence '()))
-    (let ((the-ops
-	   (list (list 'initialize-stack
-		       (lambda () (stack initialize)))))
-	  (register-table
-	   (list (list 'pc pc) (list 'flag flag))))
-      (define (allocate-register name)
-	(if (assoc name register-table)
-	    (error "Multiply defined register:" name)
-	    (set! register-table
-		  (cons (list name (make-register name))
-			register-table)))
-	'register-allocated)
-      (define (lookup-register name)
-	(let ((val (assoc name register-table)))
-	  (if val
-	      (cadr val)
-	      ;; レジスタが見つからなかったら、エラーにしないで新規レジスタを作成する
-	      (begin (allocate-register name)
-		     (lookup-register name)))))
-      (define (execute)
-	(let ((insts (get-contents pc)))
-	  (if (null? insts)
-	      'done
-	      (begin
-		((instruction-execution-proc (car insts)))
-		(execute)))))
-      (define (dispatch message)
-	(cond ((eq? message 'start)
-	       (set-contents! pc the-instruction-sequence)
-	       (execute))
-	      ((eq? message 'install-instruction-sequence)
-	       (lambda (seq) (set! the-instruction-sequence seq)))
-	      ((eq? message 'allocate-register) allocate-register)
-	      ((eq? message 'get-register) lookup-register)
-	      ((eq? message 'install-operations)
-	       (lambda (ops) (set! the-ops (append the-ops ops))))
-	      ((eq? message 'stack) stack)
-	      ((eq? message 'operations) the-ops)
-	      (else (error "Unknown request -- MACHINE" message))))
-      dispatch)))
+;; (define (make-new-machine)
+;;   (let ((pc (make-register 'pc))
+;; 	(flag (make-register 'flag))
+;; 	(stack (make-stack))
+;; 	(the-instruction-sequence '()))
+;;     (let ((the-ops
+;; 	   (list (list 'initialize-stack
+;; 		       (lambda () (stack initialize)))))
+;; 	  (register-table
+;; 	   (list (list 'pc pc) (list 'flag flag))))
+;;       (define (allocate-register name)
+;; 	(if (assoc name register-table)
+;; 	    (error "Multiply defined register:" name)
+;; 	    (set! register-table
+;; 		  (cons (list name (make-register name))
+;; 			register-table)))
+;; 	'register-allocated)
+;;       (define (lookup-register name)
+;; 	(let ((val (assoc name register-table)))
+;; 	  (if val
+;; 	      (cadr val)
+;; 	      ;; レジスタが見つからなかったら、エラーにしないで新規レジスタを作成する
+;; 	      (begin (allocate-register name)
+;; 		     (lookup-register name)))))
+;;       (define (execute)
+;; 	(let ((insts (get-contents pc)))
+;; 	  (if (null? insts)
+;; 	      'done
+;; 	      (begin
+;; 		((instruction-execution-proc (car insts)))
+;; 		(execute)))))
+;;       (define (dispatch message)
+;; 	(cond ((eq? message 'start)
+;; 	       (set-contents! pc the-instruction-sequence)
+;; 	       (execute))
+;; 	      ((eq? message 'install-instruction-sequence)
+;; 	       (lambda (seq) (set! the-instruction-sequence seq)))
+;; 	      ((eq? message 'allocate-register) allocate-register)
+;; 	      ((eq? message 'get-register) lookup-register)
+;; 	      ((eq? message 'install-operations)
+;; 	       (lambda (ops) (set! the-ops (append the-ops ops))))
+;; 	      ((eq? message 'stack) stack)
+;; 	      ((eq? message 'operations) the-ops)
+;; 	      (else (error "Unknown request -- MACHINE" message))))
+;;       dispatch)))
+
+;; 5.2.4 計算機の性能の監視
+;; シミュレーションは、計算機の性能の計測にも有効である
+;; 例えば、スタック演算の回数を計測するメータを組み込むことができる
+
+;; make-new-machineの初期化のthe-opsを変更する
+;; (list (list 'initialize-stack
+;; 	    (lambda () (stack 'initialize)))
+;;       (list 'print-stack-statistics
+;; 	    (lambda () (stack 'print-stack-statistics))))
+
+;; 新しいmake-stack
+(define (make-stack)
+  (let ((s '())
+	(number-pushes 0)
+	(max-depth 0)
+	(current-depth 0))
+    (define (push x)
+      (set! s (cons x s))
+      (set! number-pushes (+ 1 number-pushes))
+      (set! current-depth (+ 1 current-depth))
+      (set! max-depth (max current-depth max-depth)))
+    (define (pop)
+      (if (null? s)
+	  (error "Empty stack -- POP")
+	  (let ((top (car s)))
+	    (set! s (cdr s))
+	    (set! current-depth (- current-depth 1))
+	    top)))
+    (define (initialize)
+      (set! s '())
+      (set! number-pushes 0)
+      (set! max-depth 0)
+      (set! current-depth 0)
+      'done)
+    (define (print-statistics)
+      (newline)
+      (display (list 'total-pushes '= number-pushes
+		     'max-depth '= max-depth)))
+    (define (dispatch message)
+      (cond ((eq? message 'push) push)
+	    ((eq? message 'pop) (pop))
+	    ((eq? message 'initialize) (initialize))
+	    ((eq? message 'print-statistics)
+	     (print-statistics))
+	    (else (error "Unknown request -- STACK" message))))
+    dispatch))
+
+;;
+;;(load "./q514.scm")
+;;(load "./q515.scm")
+;;(load "./q516.scm")
+(load "./q517.scm")
+(load "./q518.scm")
+;(load "./q519.scm")
