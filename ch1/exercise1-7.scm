@@ -1,3 +1,6 @@
+;; 問題1.7
+; good-enough? は非常に小さい数の平方根をとるときには効果的ではない
+
 (define (sqrt-iter old new x)
   (if (good-enough? old new)
       new

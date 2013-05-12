@@ -1,3 +1,5 @@
+;; 1.1.7
+;; 例：Newton法による平方根
 (define (sqrt-iter guess x)
   (if (good-enough? guess x)
       guess
@@ -17,3 +19,5 @@
 ;平方根を求める関数
 (define (sqrt x)
   (sqrt-iter 1.0 x))
+
+(sqrt 9)

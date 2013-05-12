@@ -1,3 +1,7 @@
+;; 問題1.8
+; 立方根をとるNewton法のよりよい近似値
+; ((x/y^2) + 2y) / 3
+
 (define (cube-iter old new x)
   (if (good-enough? old new)
       new

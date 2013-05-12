@@ -1,3 +1,4 @@
+;; 1.1.4 合成手続き
 (define (square x) (* x x))
 
 (square 21)
