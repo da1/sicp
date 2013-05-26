@@ -59,7 +59,8 @@
 ;; http://practical-scheme.net/wiliki/schemexref.cgi?SRFI-27
 ;; http://sicp.g.hatena.ne.jp/hyuki/20060505/random
 (use srfi-27)
-; (define random random-real)
+
+
 
 ;; 4.1.1
 ;; schemeのapply手続きを退避
