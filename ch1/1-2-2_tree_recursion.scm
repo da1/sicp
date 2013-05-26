@@ -1,8 +1,10 @@
-;; 1.2.2
+; 1.2.2 木構造再帰
 (define (fib n)
   (cond ((= n 0) 0)
     ((= n 1) 1)
     (else (+ (fib (- n 1)) (fib (- n 2))))))
+
+;; この実装では，ステップ数が指数的に増加する
 
 (define (fib n)
   (fib-iter 1 0 n))
@@ -10,6 +12,10 @@
   (if (= count 0)
       b
       (fib-iter (+ a b) a (- count 1))))
+
+;; こちらの実装は，線形の増加
+
+;; 例：両替の計算
 
 (define (count-change amount)
   (cc amount 5))
@@ -26,32 +32,3 @@
     ((= kinds-of-coins 4) 25)
     ((= kinds-of-coins 5) 50)))
 
-;; 1.11
-;; f(n) = n ; n < 3
-;; f(n) = f(n-1)+2f(n-2)+3f(n-3) n>=3
-(define (f n)
-  (cond ((< n 3) n)
-    (else (+ (f (- n 1))
-         (* 2 (f (- n 2)))
-         (* 3 (f (- n 3)))))))
-(f 1)
-(f 2)
-(f 3)
-(f 4)
-
-;; 1.12
-(define (pascal-triangle n k)
-  (cond ((< n 3) 1)
-    ((= k 1) 1)
-    ((= k n) 1)
-    (else (+ (pascal-triangle (- n 1) (- k 1))
-         (pascal-triangle (- n 1) k)))))
-
-(pascal-triangle 1 1)
-(pascal-triangle 2 1)
-(pascal-triangle 2 2)
-(pascal-triangle 3 2)
-(pascal-triangle 4 2)
-(pascal-triangle 5 3)
-
-;; 1.13
