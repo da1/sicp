@@ -1,4 +1,9 @@
 ;; 問題 1.9
+(define (inc x)
+  (+ x 1))
+(define (dec x)
+  (- x 1))
+
 (define (+ a b)
   (if (= a 0)
       b
@@ -9,7 +14,4 @@
       b
       (+ (dec a) (inc b))))
 
-(define (inc x)
-  (+ x 1))
-(define (dec x)
-  (- x 1))
+(+ 2 3)
