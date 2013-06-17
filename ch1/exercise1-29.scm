@@ -6,7 +6,7 @@
 (define (simpson f a b n)
   (define h (/ (- b a) n))
   (define (coeffient k)
-    (cond ((or (= k 0) (= k n)) 0)
+    (cond ((or (= k 0) (= k n)) 1)
           ((even? k) 2)
           (else 4)))
   (define (simpson-term k)
