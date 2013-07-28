@@ -54,6 +54,9 @@
 (define (prime? n)
   (= n (smallest-divisor n)))
 
+;; 2.2.1
+(define nil '())
+
 ;; 問題3.5
 ;; 乱数
 ;; http://practical-scheme.net/wiliki/schemexref.cgi?SRFI-27
