@@ -15,9 +15,9 @@
 (dot-product (list 1 2 3 4) (list 1 2 3 4))
 
 (define (matrix-*-vector m v)
-  (map (lambda (x) (* x v)) m))
+  (map (lambda (x) (dot-product x v)) m))
 
-(matrix-*-vector (list 1 2 3 4) 10)
+(matrix-*-vector v (list 1 0 0 0))
 
 (define (transpose mat)
   (accumulate-n
@@ -28,9 +28,7 @@
 
 (define (matrix-*-matrix m n)
   (let ((cols (transpose n)))
-    (map (lambda (mr)
-           (map (lambda (col) (dot-product mr col)) cols))
-      m)))
+    (map (lambda (v) (matrix-*-vector cols v)) m)))
 
 (matrix-*-matrix
   (list (list 1 0 0))
