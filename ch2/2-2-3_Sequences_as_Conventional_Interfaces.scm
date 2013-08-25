@@ -191,7 +191,7 @@
 
 (list-fib-squares 10)
 
-; 並びの中野奇数の二乗の積の計算にも使える
+; 並びの中の奇数の二乗の積の計算にも使える
 (define (product-of-squares-of-odd-elements sequence)
   (accumulate *
               1
@@ -209,3 +209,57 @@
 
 ; リストとして実装した並びは，処理部分を組み合わせるのを可能にする公認インタフェースとして役立つ
 ; プログラムのデータ構造を少数の並びの演算の中に局所化することができる
+
+;; 写像の入れ子
+;; 並びのパラダイムを拡張し，通常はループの入れ子を使って表す多くの計算にも使えるようにできる
+;; 正の整数n，1<=j<i<=nである異なる正の整数iとjの順序対で，i+jが素数になるものをすべて見つける
+
+(define n 6)
+
+(accumulate append
+            nil
+            (map (lambda (i)
+                   (map (lambda (j) (list i j))
+                        (enumerate-interval 1 (- i 1))))
+                 (enumerate-interval 1 n)))
+
+(define (flatmap proc seq)
+  (accumulate append nil (map proc seq)))
+
+;; その和が素数であるものを見つけるため，対の並びをフィルタに通す．
+
+(define (prime-sum? pair)
+  (prime? (+ (car pair) (cadr pair))))
+
+;; 最後にフィルタされた対を，対の2つの要素とその和からなる3つ組を作る手続きで写像する
+;; 結果の並びができる
+
+(define (make-pair-sum pair)
+  (list (car pair) (cadr pair) (+ (car pair) (cadr pair))))
+
+(define (prime-sum-pairs n)
+  (map make-pair-sum
+       (filter prime-sum?
+               (flatmap
+                 (lambda (i)
+                   (map (lambda (j) (list i j))
+                        (enumerate-interval 1 (- i 1))))
+                 (enumerate-interval 1 n)))))
+
+(prime-sum-pairs 6)
+
+;; 集合Sのすべての順列，つまり集合の要素のすべての並べ方を生成したいとする
+
+(define (permutations s)
+  (if (null? s)
+    (list nil)
+    (flatmap (lambda (x)
+               (map (lambda (p) (cons x p))
+                    (permutations (remove x s))))
+             s)))
+
+(define (remove item sequence)
+  (filter (lambda (x) (not (= x item)))
+          sequence))
+
+(permutations (list 1 2 3))
