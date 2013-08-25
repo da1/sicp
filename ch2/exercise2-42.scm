@@ -67,3 +67,5 @@
 (show-queen (queens 4))
 
 (show-queen (queens 8))
+
+(length (queens 8))
