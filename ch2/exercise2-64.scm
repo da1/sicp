@@ -1,5 +1,6 @@
 ;; 問題2.64
 ; list->treeは順序付けられたリストを釣り合っている二進木に変換する
+(load "./ch2/2-3-3_Example_Representing_Sets.scm")
 
 (define (list->tree elements)
   (car (partial-tree elements (length elements))))
