@@ -1,3 +1,4 @@
+;; 問題2.74
 ;; 各自行書の従業員レコードが、従業員の名前でキーをつけたレコードの集合からなる一つのファイルでできている。
 ;; セットの構造は、部門ごとに異なる。
 ;; 各従業員のレコード自体が事務所ごとに異なる構造の週烏合でaddress, salaryという識別子でキーをつけた情報を含んでいる。
@@ -6,8 +7,8 @@
 ;; http://d.hatena.ne.jp/awacio/20100907/1283868117
 ;; example data
 (define xxx-data '(("name1" "address1" 210000)
-		   ("name2" "address2" 220000)
-		   ("name3" "address3" 230000)))
+                   ("name2" "address2" 220000)
+                   ("name3" "address3" 230000)))
 
 ;; xxx-dataのpackage
 (define (install-xxx-package)
@@ -18,11 +19,11 @@
   (define (get-record db name)
     (let loop ((records (cdr db)))
       (cond ((null? records)
-	     #f)
-	    ((string=? name (get-name (car records)))
-	     (car records))
-	    (else
-	     (loop (cdr records))))))
+             #f)
+            ((string=? name (get-name (car records)))
+             (car records))
+            (else
+              (loop (cdr records))))))
   ;record
   (define (make-record name address salary)
     (list name address salary))
@@ -30,7 +31,7 @@
     (car record))
   (define (get-salary record)
     (caddr record))
-  
+
   ;;public
   (put 'make-db 'xxx make-db)
   (put 'make-record 'xxx make-record)
@@ -49,28 +50,32 @@
 (define (get-record db name)
   ((get 'get-record (type-tag db)) db name))
 
+(get-record xxx-db "name1")
+
 ;; b
 (define (get-salary db name)
   (let ((target (get-record db name))
-	(proc (get 'get-salary (type-tag db))))
+        (proc (get 'get-salary (type-tag db))))
     (if (eq? #f target)
-	#f
-	(proc target))))
+      #f
+      (proc target))))
 
 ;; c
-(define (fine-employee-record db-list name)
+(define (find-employee-record db-list name)
   (let loop ((dbs db-list))
     (if (null? dbs)
-	#f
-	(let ((target (get-record (car dbs) name)))
-	  (if (eq? #f target)
-	      (loop (cdr dbs))
-	      target)))))
+      #f
+      (let ((target (get-record (car dbs) name)))
+        (if (eq? #f target)
+          (loop (cdr dbs))
+          target)))))
+
+(find-employee-record (list xxx-db) "name3")
 
 ;; yyy-data
 (define yyy-data '((1 ("yyy-name1" "yyy-address1" 310000))
-		   (2 ("yyy-name2" "yyy-address2" 320000))
-		   (3 ("yyy-name3" "yyy-address3" 330000))))
+                   (2 ("yyy-name2" "yyy-address2" 320000))
+                   (3 ("yyy-name3" "yyy-address3" 330000))))
 ;; yyy-dataのpackage
 (define (install-yyy-package)
   ;;Private
@@ -80,11 +85,11 @@
   (define (get-record db name)
     (let loop ((records (cdr db)))
       (cond ((null? records)
-	     #f)
-	    ((string=? name (get-name (car records)))
-	     (car records))
-	    (else
-	     (loop (cdr records))))))
+             #f)
+            ((string=? name (get-name (car records)))
+             (car records))
+            (else
+              (loop (cdr records))))))
   ;record
   (define (make-record name address salary)
     (list -1 (list name address salary)))
@@ -108,3 +113,5 @@
 (define yyy-db ((get 'make-db 'yyy) yyy-data))
 (define (make-record-yyy name address salary)
   ((get 'make-record 'yyy) name address salary))
+
+(get-record yyy-db "yyy-name2")

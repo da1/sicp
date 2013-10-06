@@ -1,43 +1,25 @@
-(define (square x) (* x x))
-
+; 2.4.3
 ; メッセージパッシング
+; データ手動プログラミングの基本の考えは，演算対型の表を使ってプログラムの汎用演算を操作することであった． 
+; 演算対型の表を行方向に分割して，拡販用演算手続きは表の行を代表している
+
+; もう一つの戦略として，表を列方向に分割する
+; 手続名で振り分ける賢明なデータオブジェクトで仕事をする
+
+(load "./utils.scm")
+(load "./ch2/2-4_Multiple_Representations_for_Abstract_Data.scm")
+
 (define (make-from-real-imag x y)
   (define (dispatch op)
     (cond ((eq? op 'real-part) x)
-	  ((eq? op 'imag-part) y)
-	  ((eq? op 'magnitude)
-	   (sqrt (+ (square x) (square y))))
-	  ((eq? op 'angle)
-	   (atan y x))
-	  (else
-	   (error "Unknown op -- MAKE-FROM-REAL-IMAG" op))))
+          ((eq? op 'imag-part) y)
+          ((eq? op 'magnitude)
+           (sqrt (+ (square x) (square y))))
+          ((eq? op 'angle)
+           (atan y x))
+          (else
+            (error "Unknown op -- MAKE-FROM-REAL-IMAG" op))))
 dispatch)
 
 (define (apply-generic op arg) (arg op))
-
-;q2.75
-;make-from-mag-angをメッセージパッシング流儀で実装せよ
-(define (make-from-mag-ang r a)
-  (define (dispatch op)
-    (cond ((eq? op 'real-part) (* r (cos a)))
-	  ((eq? op 'imag-part) (* r (sin a)))
-	  ((eq? op 'magnitude) r)
-	  ((eq? op 'angle) a)
-	  (else
-	   (error "Unknown op -- MAKE-FROM-MAG-ANG" op))))
-dispatch)
-
-;sample
-(define sample1 (make-from-real-imag 3 4))
-(sample1 'real-part)
-(sample1 'imag-part)
-(sample1 'magnitude)
-(sample1 'angle)
-
-;sample
-(define sample2 (make-from-mag-ang 1 3.14))
-(sample2 'real-part)
-(sample2 'imag-part)
-(sample2 'magnitude)
-(sample2 'angle)
 
