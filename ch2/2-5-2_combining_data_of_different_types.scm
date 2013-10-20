@@ -38,8 +38,7 @@
 (define get-coercion (operation-table 'lookup-proc))
 (define put-coercion (operation-table 'insert-proc!))
 
-
-
+(put-coercion 'scheme-number 'complex scheme-number->complex)
 
 ;;2.86
 ;;Exercise 2.86.  Suppose we want to handle complex numbers whose real parts, imaginary parts, magnitudes, and angles can be either ordinary numbers, rational numbers, or other numbers we might wish to add to the system. Describe and implement the changes to the system needed to accommodate this. You will have to define operations such as sine and cosine that are generic over ordinary numbers and rational numbers.

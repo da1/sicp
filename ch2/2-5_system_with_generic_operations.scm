@@ -92,8 +92,8 @@
   ;; 2.83
   ;;;複素数への強制型変換
   (put 'raise '(rational)
-       (lambda (x)
-         (make-complex-from-real-imag (contents x) 0)))
+              (lambda (x)
+                   (make-complex-from-real-imag (round (/ (numer x) (denom x))) 0)))
   (put 'make 'rational
        (lambda (n d) (tag (make-rat n d))))
   'done)
@@ -154,11 +154,6 @@
        (lambda (x y) (equal? x y)))
   (put 'zero? '(complex)
        (lambda (x) (=zero-complex? x)))
-  ;; 2.83
-  ;;;複素数への強制型変換
-  (put 'raise '(real)
-       (lambda (x)
-         (make-complex-from-real-imag (contents x) 0)))
   'done)
 (install-complex-package)
 

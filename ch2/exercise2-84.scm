@@ -6,7 +6,7 @@
 ;;http://www.serendip.ws/archives/1087
 (define (higher-type type1 type2)
   ;;型の型、新しい型を定義したらこのリストに追加する
-  (let ((tower '(complex real rational scheme-number)))
+  (let ((tower '(complex rational scheme-number)))
     (define (iter twr)
       (if (null? twr)
         false
