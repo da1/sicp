@@ -15,15 +15,19 @@
 
 ;sample
 (define sample1 (make-from-real-imag 3 4))
-(sample1 'real-part)
-(sample1 'imag-part)
-(sample1 'magnitude)
-(sample1 'angle)
+(real-part sample1)
+(imag-part sample1)
+(magnitude sample1)
+(angle sample1)
 
 ;sample
 (define sample2 (make-from-mag-ang 1 3.14))
-(sample2 'real-part)
-(sample2 'imag-part)
-(sample2 'magnitude)
-(sample2 'angle)
+(real-part sample2)
+(imag-part sample2)
+(magnitude sample2)
+(angle sample2)
+
+(define add-sample (add-complex sample1 sample2))
+(real-part add-sample)
+(imag-part add-sample)
 
