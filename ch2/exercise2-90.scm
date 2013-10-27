@@ -279,24 +279,23 @@
     (add-poly p1 (negate-poly p2)))
   ;2.93
   (define (gcd-terms a b)
-    ;    (display (list 'gcd-terms a b))
-    ;    (newline)
+;    (display (list 'gcd-terms a b))
+;    (newline)
     (if (empty-termlist? b)
       a
-      ;        (gcd-terms b (remainder-terms a b))))
-      (gcd-terms b (pseudoremainder-terms a b))))
+      (gcd-terms b (remainder-terms a b))))
+      ;(gcd-terms b (pseudoremainder-terms a b))))
   (define (remainder-terms a b)
     ;    (cadr #?=(div-terms a b)))
     (let ((div-value (div-terms a b)))
       (cons (car div-value) (caddr div-value)))
     )
   (define (pseudoremainder-terms a b)
-    (let ((o1 (max-order-poly #?=a)) (o2 (max-order-poly #?=b)) (c (max-coeff-poly b)))
-      (let ((integerizing-factor #?=(expt c (+ 1 (- o1 o2)))))
-        (let ((div-value #?=(div-terms
-                              #?=(mul a
-                                      #?=(make-sparse-term (list (list 0 integerizing-factor)))) 
-                              b)))
+    (let ((o1 (max-order-poly a)) (o2 (max-order-poly b)) (c (max-coeff-poly b)))
+      (let ((integerizing-factor (expt c (+ 1 (- o1 o2)))))
+        (let ((div-value (div-terms
+                           (mul a (make-sparse-term (list (list 0 integerizing-factor))))
+                           b)))
           (cons (car div-value) (caddr div-value))))))
   (define (gcd-poly p1 p2)
     (if (same-variable? (variable p1) (variable p2))
