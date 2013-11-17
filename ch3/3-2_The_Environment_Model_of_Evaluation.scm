@@ -65,38 +65,15 @@
 ;部分式が評価されたら、結果が戻る。squareの呼び出しで生成された値がsum-of-squaresで足され、
 ;その結果がfにより返される。
 
-;問題3.9
-;1.2.1節の階乗を計算する手続き
-;再帰版
-(define (factorial n)
-  (if (= n 1)
-      1
-      (* n (factorial (- n 1)))))
-(factorial 6)
-
-;反復版
-(define (factorial n)
-  (fact-iter 1 1 n))
-
-(define (fact-iter product counter max-count)
-  (if (> counter max-count)
-      product
-      (fact-iter (* counter product)
-		 (+ counter 1)
-		 max-count)))
-(factorial 6)
-;これらを評価するときの環境構造を示せ
-
-
 ;3.2.3 局所変数の入れ物としてのフレーム
 ;局所状態を持つオブジェクトを表現するのに、手続きや代入がどう使えるのかを見る
 
 (define (make-withdraw balance)
   (lambda (amount)
     (if (>= balance amount)
-	(begin (set! balance (- balance amount))
-	       balance)
-	"Insufficient funds")))
+      (begin (set! balance (- balance amount))
+             balance)
+      "Insufficient funds")))
 
 (define W1 (make-withdraw 100))
 (W1 50)
@@ -124,41 +101,8 @@
 ;2つの手続きオブジェクトが同じコードを共有するか、それぞれがコードの複製を持つかは、実装の細部のこと。
 ;4章で実装する解釈系ではコードは共有している
 
-;図3.10
-;make-withdraw手続きで、局所変数balanceをletを使って明示的に作った例
-(define (make-withdraw initial-amount)
-  (let ((balance initial-amount))
-    (lambda (amount)
-      (if (>= balance amount)
-	  (begin (set! balance (- balance amount))
-		 balance)
-	  "Insufficient funds"))))
-
-;(let ((<var> <exp>)) <body>)
-;((lambda (var) (body)) <exp>) のシンタックスシュガー
-
-(define W1 (make-withdraw 100))
-(W1 50)
-(define W2 (make-withdraw 100))
-;示す環境構造の図をかけ
-
 ;3.2.4 内部定義
-;問題3.11
-;(define acc (make-account 50))
-;環境E1の中に、引数balanceに50が束縛される
-;make-accountが評価されて、E1の中に、手続きwithdraw、deposit、dispatchが定義される。
-;変数accに、手続きdispatchが束縛される
-
-;((acc 'deposit) 40)
-;; 環境E2が作られる。dispathの引数mに、depositが束縛される
-;; depositが評価されて、手続きdepositが呼び出される。
-;; 環境E3が作られて、amountに40が束縛される
-;; 評価されて、balanceの値が書き換わる
-
-;;((acc 'withdraw) 60)
-;;
-
-;;(define acc2 (make-account 100))
-;;make-accountが指す手続きが共通
-;;balanceの値や、その下の環境などは別
-
+;; 1.1.8節では，手続きは内部定義を持つことができることを説明した．
+;; 環境モデルは，局所手続き定義をプログラムを部品化する有用な技法とする重要な性質が説明できる
+;; 局所手続きの名前は大域環境で束縛されるのではなく，手続きが走るときに作り出したフレームで束縛されるので，囲んでいる外部の名前と衝突しない
+;; 局所手続きは，パラメータの名前を自由変数として書くことで，外部の手続きの引数にアクセスできる．局所手続きの本体は，外側の手続きの評価環境の下の環境で評価されるからである

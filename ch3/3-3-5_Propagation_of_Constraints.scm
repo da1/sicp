@@ -43,12 +43,12 @@
     (forget-value! a2 me)
     (process-new-value))
   (define (me request)
-    (cond ((eq? request 'I-have-a-value)  
+    (cond ((eq? request 'I-have-a-value)
            (process-new-value))
-          ((eq? request 'I-lost-my-value) 
+          ((eq? request 'I-lost-my-value)
            (process-forget-value))
           (else 
-           (error "Unknown request -- ADDER" request))))
+            (error "Unknown request -- ADDER" request))))
   (connect a1 me)
   (connect a2 me)
   (connect sum me)
@@ -87,7 +87,7 @@
           ((eq? request 'I-lost-my-value)
            (process-forget-value))
           (else
-           (error "Unknown request -- MULTIPLIER" request))))
+            (error "Unknown request -- MULTIPLIER" request))))
   (connect m1 me)
   (connect m2 me)
   (connect product me)
@@ -117,7 +117,7 @@
           ((eq? request 'I-lost-my-value)
            (process-forget-value))
           (else
-           (error "Unknown request -- PROBE" request))))
+            (error "Unknown request -- PROBE" request))))
   (connect connector me)
   me)
 
@@ -136,17 +136,17 @@
             (else 'ignored)))
     (define (forget-my-value retractor)
       (if (eq? retractor informant)
-          (begin (set! informant false)
-                 (for-each-except retractor
-                                  inform-about-no-value
-                                  constraints))
-          'ignored))
+        (begin (set! informant false)
+               (for-each-except retractor
+                                inform-about-no-value
+                                constraints))
+        'ignored))
     (define (connect new-constraint)
       (if (not (memq new-constraint constraints))
-          (set! constraints 
-                (cons new-constraint constraints)))
+        (set! constraints 
+          (cons new-constraint constraints)))
       (if (has-value? me)
-          (inform-about-value new-constraint))
+        (inform-about-value new-constraint))
       'done)
     (define (me request)
       (cond ((eq? request 'has-value?)
@@ -182,85 +182,3 @@
 (define (connect connector new-constraint)
   ((connector 'connect) new-constraint))
 
-;;問題3.33
-(define (averager a b c)
-  (let ((u (make-connector))
-	(v (make-connector)))
-    (adder a b u)
-    (multiplier v c u)
-    (constant 2 v)
-  'ok))
-
-(define false #f)
-(define true #t)
-
-(define A (make-connector))
-(define B (make-connector))
-(define C (make-connector))
-
-(probe "A" A)
-(probe "B" B)
-(averager A B C)
-(set-value! A 10 'user)
-(set-value! B 30 'user)
-(get-value C)
-(forget-value! A 'user)
-(set-value! A 90 'user)
-
-;; 問題3.34,3.35
-;; bをセットしたときに未設定の変数が2つできてしまう
-
-(define (squarer a b)
-  (define (process-new-value)
-    (if (has-value? b)
-	(if (< (get-value b) 0)
-	    (error "square less than 0 -- SQUARE" (get-value b))
-	    (set-value! a (sqrt b)))
-	(set-value! b (* (get-value a) (get-value a)))))
-  (define (process-forget-value)
-    ((forget-value! a me)
-     (forget-value! b me)))
-  (define (me require)
-    (cond ((eq? require 'I-have-a-value)
-	   (process-new-value))
-	  ((eq? require 'I-lost-my-value)
-	   (process-forget-value!))
-	  (error "Unknown request -- SQUARE" require)))
-  me)
-
-;; 問題3.36
-(define a (make-connector))
-(define b (make-connector))
-(set-value! a 10 'user)
-
-(for-each-except setter inform-about-value constraints)
-;; 上式の環境の図を描け
-
-;; 問題3.37
-(define (celsius-fahrenheit-converter x)
-  (c+ (c* (c/ (cv 9) (cv 5))
-	  x)
-      (cv 32)))
-
-(define C (make-connector))
-(define F (celsius-fahrenheit-converter C))
-
-(define (c+ x y)
-  (let ((z (make-connector)))
-    (adder x y z)
-    z))
-(define (c- x y)
-  (let ((z (make-connector)))
-    (adder y z x)
-    z))
-(define (c* x y)
-  (let ((z (make-connector)))
-    (multiplier x y z)
-    z))
-(define (c/ x y)
-  (let ((z (make-connector)))
-    (multiplier y z x)))
-(define (cv x)
-  (let ((z (make-connector)))
-    (constant x z)
-    z))
