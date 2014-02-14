@@ -82,6 +82,9 @@
 
 ;; delayの定義
 ;; (memo-proc (lambda () <exp>))
+(define-macro (delay x) `(memo-proc (lambda () ,x)))
+; (define-macro (delay x) `(lambda () ,x))
+(define (force x) (x))
 
 ;; 3.5.2 無限ストリーム
 ;; 無限の長さをもったストリームを扱う

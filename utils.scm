@@ -80,16 +80,15 @@
 ;; http://sicp.g.hatena.ne.jp/hyuki/20060505/random
 (use srfi-27)
 
-
-
 ;; 4.1.1
 ;; schemeのapply手続きを退避
 (define apply-in-underlying-scheme apply)
 
 ;; 3.5.1
-(define-macro (delay x) `(memo-proc (lambda () ,x)))
-; (define-macro (delay x) `(lambda () ,x))
-(define (force x) (x))
+(define-syntax cons-stream
+  (syntax-rules ()
+                ((cons-stream h t)
+                 (cons h (delay t)))))
 
 ;; 5
 (define user-initial-environment interaction-environment)
