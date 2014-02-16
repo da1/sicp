@@ -101,4 +101,5 @@
 (rear-delete-queue! q)
 (print-queue q) ;;?
 
-
+;; front-insert-queue! して rear-insert-queue! するとバグる
+;; L40のあたりで処理がたりない
