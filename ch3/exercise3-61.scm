@@ -5,6 +5,7 @@
 ;; (1 + Sr) * X = 1
 ;;     X + Sr*X = 1
 ;;            X = 1 - Sr*x
+(load "./ch3/exercise3-60.scm")
 
 (define (invert-unit-series s)
   (cons-stream 1

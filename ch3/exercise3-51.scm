@@ -1,4 +1,6 @@
 ;; 問題3.51
+(load "./ch3/exercise3-50.scm")
+
 (define (show x)
   (display-line x)
   x)

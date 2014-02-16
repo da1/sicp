@@ -1,4 +1,6 @@
 ;; 問題 3.69
+(load "./ch3/3-5-3_Exploiting_the_Stream_Paradigm.scm")
+
 (define (triples s t u)
   (cons-stream
     (list (stream-car s) (stream-car t) (stream-car u))

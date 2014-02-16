@@ -1,4 +1,5 @@
 ;; 問題3.64
+(load "./ch3/3-5-3_Exploiting_the_Stream_Paradigm.scm")
 (define (stream-limit s q)
   (let ((s1 (stream-car s))
         (s2 (stream-car (stream-cdr s))))

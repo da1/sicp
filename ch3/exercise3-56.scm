@@ -2,6 +2,7 @@
 ;; Sは１から始まる
 ;; (scale-stream S 2), (scale-stream S 3), (scale-stream S 5)の要素はSの要素
 
+(load "./ch3/3-5-2_Infinite_Streams.scm")
 ;; 2^n・3^m・5^rで表せる整数のことをハミング数と呼ぶらしいです。
 ;; ストリームをマージする手続き
 (define (merge s1 s2)

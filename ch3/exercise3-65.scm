@@ -1,4 +1,6 @@
 ;; 問題3.65
+(load "./ch3/3-5-3_Exploiting_the_Stream_Paradigm.scm")
+
 (define (log-summands n)
   (cons-stream (/ 1.0 n)
                (stream-map - (log-summands (+ n 1)))))

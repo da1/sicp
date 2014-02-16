@@ -1,6 +1,7 @@
 ;; 問題3.62
 ;; べき級数の割り算
 ;; これを使って，tanのべき級数を生成する方法を述べよ
+(load "./ch3/exercise3-61.scm")
 (define (div-series s1 s2)
   (if (= (stream-car s2) 0)
     (error "zero division occured.")

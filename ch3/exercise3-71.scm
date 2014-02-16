@@ -1,4 +1,6 @@
 ;; 問題3.71
+(load "./ch3/exercise3-70.scm")
+
 (define (cube x) (* x x x))
 (define (cube-weight x)
   (let ((i (car x))

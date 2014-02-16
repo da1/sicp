@@ -1,4 +1,5 @@
 ;; 問題3.59
+(load "./ch3/3-5-2_Infinite_Streams.scm")
 ;; 無限ストリームでべき級数を扱う
 ;; a. べき級数を表現するストリームを受け取り，積分（定数項を除く）した項の係数ストリームを返す
 (define (integrate-series s)

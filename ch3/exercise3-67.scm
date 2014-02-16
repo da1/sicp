@@ -1,4 +1,6 @@
 ;; 問題3.67
+(load "./ch3/3-5-3_Exploiting_the_Stream_Paradigm.scm")
+
 ;; http://www.serendip.ws/archives/1675
 (define (interleave s1 s2)
   (if (stream-null? s1)

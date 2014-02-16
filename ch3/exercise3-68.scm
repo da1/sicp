@@ -1,4 +1,6 @@
 ;; 問題3.68
+(load "./ch3/3-5-3_Exploiting_the_Stream_Paradigm.scm")
+
 (define (pairs s t)
   (interleave
     (stream-map (lambda (x) (list (stream-car s) x))

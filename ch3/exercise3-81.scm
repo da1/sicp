@@ -1,4 +1,6 @@
 ;; 問題3.81
+(load "./ch3/3-5-3_Exploiting_the_Stream_Paradigm.scm")
+
 (define (rand-update x)
   (remainder (+ x 1812433253) 4294967296))
 (define (rand input-stream random-init)

@@ -1,4 +1,6 @@
 ;; 問題3.72
+(load "./ch3/3-5-3_Exploiting_the_Stream_Paradigm.scm")
+
 (define (square-weight x)
   (let ((i (car x))
         (j (cadr x)))

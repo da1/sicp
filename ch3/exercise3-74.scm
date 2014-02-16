@@ -1,4 +1,6 @@
 ;; 問題3.74
+(load "./ch3/3-5-3_Exploiting_the_Stream_Paradigm.scm")
+
 (define sense-data
   (stream-map (lambda (x) (sin x)) integers))
 

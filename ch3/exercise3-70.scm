@@ -1,4 +1,6 @@
 ;; 問題3.70
+(load "./ch3/3-5-3_Exploiting_the_Stream_Paradigm.scm")
+
 (define (merge-weighted pairs1 pairs2 weight)
   (cond ((stream-null? (stream-car pairs1)) pairs2)
         ((stream-null? (stream-car pairs2)) pairs1)

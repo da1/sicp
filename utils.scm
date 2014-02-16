@@ -85,6 +85,8 @@
 (define apply-in-underlying-scheme apply)
 
 ;; 3.5.1
+(define the-empty-stream '())
+(define stream-null? null?)
 (define-syntax cons-stream
   (syntax-rules ()
                 ((cons-stream h t)

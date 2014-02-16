@@ -1,4 +1,6 @@
 ;; 問題3.73
+(load "./ch3/3-5-3_Exploiting_the_Stream_Paradigm.scm")
+
 (define (RC R C dt)
   (define (rc i-st v-zero)
     (add-streams

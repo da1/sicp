@@ -1,4 +1,6 @@
 ;; 問題3.63
+(load "./ch3/3-5-3_Exploiting_the_Stream_Paradigm.scm")
+
 (define (sqrt-stream x)
   (cons-stream 1.0
                (stream-map (lambda (guess)
