@@ -1,4 +1,6 @@
 ;; 問題3.82 ;;***要再チェック
+(load "./ch3/3-5-3_Exploiting_the_Stream_Paradigm.scm")
+
 (define (estimate-integral p x1 x2 y1 y2)
   (define monte-carlo-stream
     (stream-map (lambda (m)
